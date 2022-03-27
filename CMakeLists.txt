@@ -15,14 +15,24 @@ include(AddLLVM)
 list(APPEND CMAKE_MODULE_PATH ${CLANG_CMAKE_DIR})
 include(AddClang)
 
-set(LLVM_LINK_COMPONENTS
-Support
-Analysis
-)
-
-add_llvm_executable(UnknownField 
+add_executable(UnknownField 
 main.cpp
 )
+
+target_link_libraries(UnknownField
+  PRIVATE
+  clangAST
+  clangASTMatchers
+  clangBasic
+  clangDynamicASTMatchers
+  clangFrontend
+  clangTooling
+  clangSerialization
+  LLVMLineEditor
+  LLVMSupport
+  LLVMFrontendOpenMP
+)
+
 
 
 
