@@ -1,4 +1,3 @@
-#include <stdio.h>
-int main() {
-  return 0;
-}
+
+
+int main(int argc, const char **argv) { return 0; }
