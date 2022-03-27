@@ -21,7 +21,7 @@ Analysis
 )
 
 add_llvm_executable(LLVMOufOfTreeTemplate 
-test.cpp
+main.cpp
 )
 
 
