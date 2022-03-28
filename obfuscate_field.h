@@ -71,7 +71,7 @@ class ObfuscateFieldFrontendAction : public ASTFrontendAction {
 private:
   auto GenerateRandomKey() {
     std::random_device rd;
-    // generate seed
+    // Generate seed
     std::mt19937 g(rd());
     return g;
   }
