@@ -36,6 +36,7 @@ public:
     if (auto FDNode =
             Result.Nodes.getNodeAs<clang::FieldDecl>("ObfuscateField")) {
       auto FieldStr = Rewrite.getRewrittenText(FDNode->getSourceRange());
+      // Save sth that used later.
       GlobalFieldDeclStringVector.push_back(FieldStr);
       GlobalFieldNodeVector.push_back(FDNode);
     }
@@ -45,9 +46,6 @@ private:
   Rewriter &Rewrite;
 };
 
-// Implementation of the ASTConsumer interface for reading an AST produced
-// by the Clang parser. It registers a couple of matchers and runs them on
-// the AST.
 class ObfuscateFieldASTConsumer : public ASTConsumer {
 public:
   ObfuscateFieldASTConsumer(Rewriter &R) : HandlerForObfuscateFieldDecl(R) {
@@ -57,7 +55,6 @@ public:
   }
 
   void HandleTranslationUnit(ASTContext &Context) override {
-    // Run the matchers when we have the whole TU parsed.
     Matcher.matchAST(Context);
   }
 
@@ -66,7 +63,6 @@ private:
   MatchFinder Matcher;
 };
 
-// For each source file provided to the tool, a new FrontendAction is created.
 class ObfuscateFieldFrontendAction : public ASTFrontendAction {
 private:
   auto GenerateRandomKey() {
