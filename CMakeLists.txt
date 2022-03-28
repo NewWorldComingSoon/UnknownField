@@ -15,7 +15,9 @@ include(AddLLVM)
 list(APPEND CMAKE_MODULE_PATH ${CLANG_CMAKE_DIR})
 include(AddClang)
 
-add_executable(UnknownField 
+add_executable(UnknownField
+obfuscate_field.h
+obfuscate_field.cpp
 main.cpp
 )
 
