@@ -1,4 +1,6 @@
 #include "obfuscate_field.h"
 
-std::vector<const clang::FieldDecl *> GlobalFieldNodeVector;
-std::vector<std::string> GlobalFieldDeclStringVector;
+std::map<std::string, std::vector<const clang::FieldDecl *>>
+    GlobalFieldNodeVectorMap;
+std::map<std::string, std::vector<std::string>>
+    GlobalClassFieldDeclStringVectorMap;

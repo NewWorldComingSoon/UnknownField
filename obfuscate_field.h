@@ -2,6 +2,7 @@
 #define _OBFUSCATE_FIELD_H
 
 #include <iostream>
+#include <map>
 #include <random>
 #include <set>
 #include <string>
@@ -25,8 +26,10 @@ using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
 
-extern std::vector<const clang::FieldDecl *> GlobalFieldNodeVector;
-extern std::vector<std::string> GlobalFieldDeclStringVector;
+extern std::map<std::string, std::vector<const clang::FieldDecl *>>
+    GlobalFieldNodeVectorMap;
+extern std::map<std::string, std::vector<std::string>>
+    GlobalClassFieldDeclStringVectorMap;
 
 class ObfuscateFieldDeclHandler : public MatchFinder::MatchCallback {
 public:
@@ -36,9 +39,13 @@ public:
     if (auto FDNode =
             Result.Nodes.getNodeAs<clang::FieldDecl>("ObfuscateField")) {
       auto FieldStr = Rewrite.getRewrittenText(FDNode->getSourceRange());
+      auto QualifiedNameStr = FDNode->getQualifiedNameAsString();
+      auto ClassNameStr = QualifiedNameStr.substr(
+          0, FDNode->getQualifiedNameAsString().length() -
+                 FDNode->getNameAsString().length() - 2);
       // Save sth that used later.
-      GlobalFieldDeclStringVector.push_back(FieldStr);
-      GlobalFieldNodeVector.push_back(FDNode);
+      GlobalFieldNodeVectorMap[ClassNameStr].push_back(FDNode);
+      GlobalClassFieldDeclStringVectorMap[ClassNameStr].push_back(FieldStr);
     }
   }
 
@@ -66,10 +73,10 @@ private:
 class ObfuscateFieldFrontendAction : public ASTFrontendAction {
 private:
   auto GenerateRandomKey() {
-    std::random_device rd;
+    std::random_device RD;
     // Generate seed
-    std::mt19937 g(rd());
-    return g;
+    std::mt19937 G(RD());
+    return G;
   }
 
 public:
@@ -78,15 +85,18 @@ public:
 
     // For Field
     {
-      // Shuffle it
-      std::shuffle(GlobalFieldDeclStringVector.begin(),
-                   GlobalFieldDeclStringVector.end(), GenerateRandomKey());
-      // Replace it
-      size_t Count = GlobalFieldNodeVector.size();
-      for (size_t i = 0; i < Count; ++i) {
-        auto FDNode = GlobalFieldNodeVector[i];
-        TheRewriter.ReplaceText(FDNode->getSourceRange(),
-                                GlobalFieldDeclStringVector[i].c_str());
+      // Traverse map
+      for (auto &Map : GlobalClassFieldDeclStringVectorMap) {
+        // Shuffle it
+        std::shuffle(Map.second.begin(), Map.second.end(), GenerateRandomKey());
+
+        // Replace it
+        size_t Count = Map.second.size();
+        for (size_t i = 0; i < Count; ++i) {
+          auto FDNode = GlobalFieldNodeVectorMap[Map.first][i];
+          TheRewriter.ReplaceText(FDNode->getSourceRange(),
+                                  Map.second[i].c_str());
+        }
       }
     }
 
