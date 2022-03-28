@@ -1,5 +1,5 @@
 # UnknownField
-UnknownField is a tool based clang that obfuscating the order of fields to protect your C/C++ code.
+UnknownField is a tool based clang that obfuscating the order of fields to protect your C/C++ game or code.
 
 ## Before
 ![image](https://github.com/gmh5225/UnknownField/blob/main/images/UnknownField_before.png)
