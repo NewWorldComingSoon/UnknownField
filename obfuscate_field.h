@@ -31,6 +31,8 @@ extern std::map<std::string, std::vector<const clang::FieldDecl *>>
 extern std::map<std::string, std::vector<std::string>>
     GlobalClassFieldDeclStringVectorMap;
 
+extern cl::opt<bool> GlobalObfucated;
+
 class ObfuscateFieldDeclHandler : public MatchFinder::MatchCallback {
 public:
   ObfuscateFieldDeclHandler(Rewriter &Rewrite) : Rewrite(Rewrite) {}
@@ -39,6 +41,11 @@ public:
     if (auto FDNode =
             Result.Nodes.getNodeAs<clang::FieldDecl>("ObfuscateField")) {
       auto FieldStr = Rewrite.getRewrittenText(FDNode->getSourceRange());
+      if (FieldStr.empty()) {
+        // Empty strings are not required
+        return;
+      }
+
       auto QualifiedNameStr = FDNode->getQualifiedNameAsString();
       auto ClassNameStr = QualifiedNameStr.substr(
           0, FDNode->getQualifiedNameAsString().length() -
@@ -56,9 +63,11 @@ private:
 class ObfuscateFieldASTConsumer : public ASTConsumer {
 public:
   ObfuscateFieldASTConsumer(Rewriter &R) : HandlerForObfuscateFieldDecl(R) {
-    Matcher.addMatcher(traverse(TK_IgnoreUnlessSpelledInSource,
-                                fieldDecl().bind("ObfuscateField")),
-                       &HandlerForObfuscateFieldDecl);
+    // Only match our main file.So we should use 'isExpansionInMainFile()'
+    Matcher.addMatcher(
+        traverse(TK_IgnoreUnlessSpelledInSource,
+                 fieldDecl(isExpansionInMainFile()).bind("ObfuscateField")),
+        &HandlerForObfuscateFieldDecl);
   }
 
   void HandleTranslationUnit(ASTContext &Context) override {
@@ -70,6 +79,15 @@ private:
   MatchFinder Matcher;
 };
 
+class PreprocessorPPCallback : public PPCallbacks {
+public:
+  /// Hook called whenever a macro definition is seen.
+  virtual void MacroDefined(const Token &MacroNameTok,
+                            const MacroDirective *MD) {
+    // TODO
+  }
+};
+
 class ObfuscateFieldFrontendAction : public ASTFrontendAction {
 private:
   auto GenerateRandomKey() {
@@ -77,6 +95,21 @@ private:
     // Generate seed
     std::mt19937 G(RD());
     return G;
+  }
+
+  bool EnableObfuscateed(std::vector<std::string> &FieldNameVector) {
+    if (GlobalObfucated) {
+      return true;
+    }
+
+    bool Enable = false;
+    for (auto &Field : FieldNameVector) {
+      if (Field.find("UnknownField_Protect") != std::string::npos) {
+        Enable = true;
+        break;
+      }
+    }
+    return Enable;
   }
 
 public:
@@ -87,12 +120,20 @@ public:
     {
       // Traverse map
       for (auto &Map : GlobalClassFieldDeclStringVectorMap) {
+        if (!EnableObfuscateed(Map.second)) {
+          continue;
+        }
+
         // Shuffle it
         std::shuffle(Map.second.begin(), Map.second.end(), GenerateRandomKey());
 
         // Replace it
         size_t Count = Map.second.size();
         for (size_t i = 0; i < Count; ++i) {
+          if (Map.second[i].empty()) {
+            // Empty strings are not required
+            continue;
+          }
           auto FDNode = GlobalFieldNodeVectorMap[Map.first][i];
           TheRewriter.ReplaceText(FDNode->getSourceRange(),
                                   Map.second[i].c_str());
@@ -107,6 +148,11 @@ public:
 
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
                                                  StringRef file) override {
+    // Add PPCallbacks
+    CI.getPreprocessor().addPPCallbacks(
+        std::make_unique<PreprocessorPPCallback>());
+
+    // New ASTConsumer
     TheRewriter.setSourceMgr(CI.getSourceManager(), CI.getLangOpts());
     return std::make_unique<ObfuscateFieldASTConsumer>(TheRewriter);
   }

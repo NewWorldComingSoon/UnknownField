@@ -1,12 +1,13 @@
+//#include <Windows.h>
+#define UnknownField_Protect(A) A
 
-
-class MyClassX {
+class UnknownField_Protect(MyClassX) {
 public:
   MyClassX();
   ~MyClassX();
 private:
   char name[300];
-  int  mp;
+  int mp;
   int maxmp;
   int hp;
   int maxhp;
@@ -41,6 +42,8 @@ private:
   unsigned char level3;
 };
 
-
-
-
+int myfunct(int a, int b) {
+	int c;
+    c = a + b;
+    return c;
+}
