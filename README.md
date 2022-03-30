@@ -9,8 +9,7 @@ UnknownField is a tool based clang that obfuscating the order of fields to prote
 
 ## TODO
 - Obfuscating the order of virtual functions.
-- Solve header file inclusion issues.
-- Embed in clang.
+- Detecting class member initialization problems
 
 ## Note
 This project is currently still a demo.
