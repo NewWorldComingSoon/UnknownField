@@ -45,7 +45,6 @@ public:
     if (auto FDNode =
             Result.Nodes.getNodeAs<clang::FieldDecl>("ObfuscateField")) {
       auto FieldStr = Rewrite.getRewrittenText(FDNode->getSourceRange());
-
       if (FieldStr.empty()) {
         // Empty strings are not required
         return;
