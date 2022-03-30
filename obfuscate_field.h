@@ -33,7 +33,7 @@ extern std::map<std::string, std::vector<const clang::FieldDecl *>>
     GlobalFieldNodeVectorMap;
 extern std::map<std::string, std::vector<std::string>>
     GlobalClassFieldDeclStringVectorMap;
-extern std::map<StringRef, bool> GlobalSDKUnknownFieldProtectionEnabledMap;
+extern std::map<std::string, bool> GlobalSDKUnknownFieldProtectionEnabledMap;
 
 extern cl::opt<bool> GlobalObfucated;
 
@@ -45,6 +45,7 @@ public:
     if (auto FDNode =
             Result.Nodes.getNodeAs<clang::FieldDecl>("ObfuscateField")) {
       auto FieldStr = Rewrite.getRewrittenText(FDNode->getSourceRange());
+
       if (FieldStr.empty()) {
         // Empty strings are not required
         return;
@@ -54,6 +55,16 @@ public:
       auto ClassNameStr = QualifiedNameStr.substr(
           0, FDNode->getQualifiedNameAsString().length() -
                  FDNode->getNameAsString().length() - 2);
+
+      if (FDNode->hasInClassInitializer()) {
+        // Filter field that in class initializer
+        GlobalSDKUnknownFieldProtectionEnabledMap[ClassNameStr] = false;
+        errs() << "Error: Find field(" << FieldStr << ")"
+               << " that in class(" << ClassNameStr << ")"
+               << " initializer we don't support!\n ";
+        return;
+      }
+
       // Save sth that used later.
       GlobalFieldNodeVectorMap[ClassNameStr].push_back(FDNode);
       GlobalClassFieldDeclStringVectorMap[ClassNameStr].push_back(FieldStr);
@@ -116,7 +127,7 @@ public:
     }
 
     StringRef ClassName = Arg0IdentifierInfo->getName();
-    GlobalSDKUnknownFieldProtectionEnabledMap[ClassName] = true;
+    GlobalSDKUnknownFieldProtectionEnabledMap[ClassName.str()] = true;
   }
 };
 
