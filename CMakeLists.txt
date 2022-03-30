@@ -15,14 +15,17 @@ include(AddLLVM)
 list(APPEND CMAKE_MODULE_PATH ${CLANG_CMAKE_DIR})
 include(AddClang)
 
-add_executable(UnknownField
+if(DEBUG_MODE)
+add_definitions(-DDEBUG_MODE)
+endif()
+
+add_library(UnknownField-lib STATIC 
 sdk/UnknownFieldSDK.h
 obfuscate_field.h
 obfuscate_field.cpp
-main.cpp
 )
 
-target_link_libraries(UnknownField
+target_link_libraries(UnknownField-lib
   PRIVATE
   clangAST
   clangASTMatchers
@@ -36,6 +39,7 @@ target_link_libraries(UnknownField
   LLVMFrontendOpenMP
 )
 
+add_subdirectory(tool)
 
 
 

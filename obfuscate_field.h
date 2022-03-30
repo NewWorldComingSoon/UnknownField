@@ -185,9 +185,12 @@ public:
       }
     }
 
+#ifdef DEBUG_MODE
     TheRewriter.getEditBuffer(TheRewriter.getSourceMgr().getMainFileID())
         .write(llvm::outs());
-    // TheRewriter.overwriteChangedFiles();
+#else
+    TheRewriter.overwriteChangedFiles();
+#endif
   }
 
   std::unique_ptr<ASTConsumer> CreateASTConsumer(CompilerInstance &CI,
