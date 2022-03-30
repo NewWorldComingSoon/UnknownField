@@ -59,7 +59,7 @@ public:
       if (FDNode->hasInClassInitializer()) {
         // Filter field that in class initializer
         GlobalSDKUnknownFieldProtectionEnabledMap[ClassNameStr] = false;
-        errs() << "Error: Find field(" << FieldStr << ")"
+        errs() << "Error: Found field(" << FieldStr << ")"
                << " that in class(" << ClassNameStr << ")"
                << " initializer we don't support!\n ";
         return;
