@@ -14,6 +14,7 @@
 #include "clang/ASTMatchers/ASTMatchers.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendActions.h"
+#include "clang/Lex/MacroArgs.h"
 #include "clang/Rewrite/Core/Rewriter.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Refactoring.h"
@@ -26,10 +27,13 @@ using namespace clang::ast_matchers;
 using namespace clang::driver;
 using namespace clang::tooling;
 
+#define UnknownFieldProtectionTagName "UnknownFieldProtection"
+
 extern std::map<std::string, std::vector<const clang::FieldDecl *>>
     GlobalFieldNodeVectorMap;
 extern std::map<std::string, std::vector<std::string>>
     GlobalClassFieldDeclStringVectorMap;
+extern std::map<std::string, bool> GlobalSDKUnknownFieldProtectionEnabledMap;
 
 extern cl::opt<bool> GlobalObfucated;
 
@@ -81,10 +85,38 @@ private:
 
 class PreprocessorPPCallback : public PPCallbacks {
 public:
-  /// Hook called whenever a macro definition is seen.
-  virtual void MacroDefined(const Token &MacroNameTok,
-                            const MacroDirective *MD) {
-    // TODO
+  /// Called by Preprocessor::HandleMacroExpandedIdentifier when a
+  /// macro invocation is found.
+  virtual void MacroExpands(const Token &MacroNameTok,
+                            const MacroDefinition &MD, SourceRange Range,
+                            const MacroArgs *Args) {
+
+    if (GlobalObfucated) {
+      // This is a global tag
+      return;
+    }
+
+    auto IdentifierInfo = MacroNameTok.getIdentifierInfo();
+    if (!IdentifierInfo) {
+      return;
+    }
+
+    if (!Args) {
+      return;
+    }
+
+    // We only care about our markers
+    if (IdentifierInfo->getName().compare(UnknownFieldProtectionTagName) != 0) {
+      return;
+    }
+
+    auto Arg0IdentifierInfo = Args->getUnexpArgument(0)->getIdentifierInfo();
+    if (!Arg0IdentifierInfo) {
+      return;
+    }
+
+    StringRef ClassName = Arg0IdentifierInfo->getName();
+    GlobalSDKUnknownFieldProtectionEnabledMap[ClassName.str()] = true;
   }
 };
 
@@ -97,19 +129,21 @@ private:
     return G;
   }
 
-  bool EnableObfuscateed(std::vector<std::string> &FieldNameVector) {
+  bool EnableObfuscateed(std::string ClassName) {
     if (GlobalObfucated) {
+      // This is a global tag
       return true;
     }
 
-    bool Enable = false;
-    for (auto &Field : FieldNameVector) {
-      if (Field.find("UnknownField_Protect") != std::string::npos) {
-        Enable = true;
-        break;
+    // Find class name that need to be protected.
+    if (GlobalSDKUnknownFieldProtectionEnabledMap.find(ClassName) !=
+        GlobalSDKUnknownFieldProtectionEnabledMap.end()) {
+      if (GlobalSDKUnknownFieldProtectionEnabledMap[ClassName]) {
+        return true;
       }
     }
-    return Enable;
+
+    return false;
   }
 
 public:
@@ -120,7 +154,7 @@ public:
     {
       // Traverse map
       for (auto &Map : GlobalClassFieldDeclStringVectorMap) {
-        if (!EnableObfuscateed(Map.second)) {
+        if (!EnableObfuscateed(Map.first)) {
           continue;
         }
 

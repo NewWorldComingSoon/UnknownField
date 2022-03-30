@@ -1,16 +1,16 @@
-//#include <Windows.h>
-#define UnknownField_Protect(A) A
+#include "../sdk/UnknownFieldSDK.h"
+#include <Windows.h>
 
-class UnknownField_Protect(MyClassX) {
+class UnknownFieldProtection(MyClassX) {
 public:
   MyClassX();
   ~MyClassX();
 private:
-  char name[300];
-  int mp;
-  int maxmp;
-  int hp;
-  int maxhp;
+  UCHAR name[300];
+  DWORD mp;
+  DWORD maxmp;
+  DWORD hp;
+  DWORD maxhp;
   unsigned char level;
 };
 
