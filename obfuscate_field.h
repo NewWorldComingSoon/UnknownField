@@ -33,7 +33,7 @@ extern std::map<std::string, std::vector<const clang::FieldDecl *>>
     GlobalFieldNodeVectorMap;
 extern std::map<std::string, std::vector<std::string>>
     GlobalClassFieldDeclStringVectorMap;
-extern std::map<std::string, bool> GlobalSDKUnknownFieldProtectionEnabledMap;
+extern std::map<StringRef, bool> GlobalSDKUnknownFieldProtectionEnabledMap;
 
 extern cl::opt<bool> GlobalObfucated;
 
@@ -116,7 +116,7 @@ public:
     }
 
     StringRef ClassName = Arg0IdentifierInfo->getName();
-    GlobalSDKUnknownFieldProtectionEnabledMap[ClassName.str()] = true;
+    GlobalSDKUnknownFieldProtectionEnabledMap[ClassName] = true;
   }
 };
 
