@@ -5,10 +5,10 @@ static llvm::cl::OptionCategory
     UnknownFieldOptionCategory("UnknownField OptionCategory");
 
 int main(int argc, const char **argv) {
-
   Expected<tooling::CommonOptionsParser> eOptParser =
-      clang::tooling::CommonOptionsParser::create(argc, argv,
-                                                  UnknownFieldOptionCategory);
+      clang::tooling::CommonOptionsParser::create(
+          argc, argv, UnknownFieldOptionCategory, llvm::cl::OneOrMore, nullptr,
+          false);
   if (auto E = eOptParser.takeError()) {
     errs() << "Problem constructing CommonOptionsParser "
            << toString(std::move(E)) << '\n';
