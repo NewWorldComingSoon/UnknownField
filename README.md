@@ -8,7 +8,7 @@ UnknownField is a tool based clang that obfuscating the order of fields to prote
 ![image](images/UnknownField_after.png)
 
 ## Usage
-```bash
+```
 UnknownField-cli.exe
 Usage: UnknownField-cli.exe [options] <source0> [... <sourceN>]
 
