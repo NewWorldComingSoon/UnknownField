@@ -41,7 +41,7 @@ private:
 ```
 
 ## Dependency
-- Visual Studio with SDK10
+- Visual Studio with SDK10 (without this you could not include windows.h in your file)
 - [llvm-msvc](https://github.com/NewWorldComingSoon/llvm-msvc-build/releases)
 
 ## Build
