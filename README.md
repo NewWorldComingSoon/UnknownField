@@ -40,6 +40,17 @@ private:
 };
 ```
 
+## Build
+```
+git clone --recurse-submodules https://github.com/NewWorldComingSoon/UnknownField.git
+cd UnknownField
+mkdir build
+cd build
+set LLVM-MSVC-BIN=E:\llvm\llvm-msvc-bin  -> You need to replace your path.
+cmake ../ -DLLVM_DIR=%LLVM-MSVC-BIN%\lib\cmake\llvm -DClang_DIR=%LLVM-MSVC-BIN%\lib\cmake\clang
+cmake --build . --config Release -- -m
+```
+
 ## TODO
 - Obfuscating the order of virtual functions.
 - GUI Tool.
