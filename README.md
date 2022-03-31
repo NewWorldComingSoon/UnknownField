@@ -13,6 +13,7 @@ UnknownField-cli.exe
 Usage: UnknownField-cli.exe [options] <source0> [... <sourceN>]
 
 Optional arguments:
+-- -I                       - External include directory
 -g                          - Enable global obfucation
 ```
 
@@ -20,6 +21,7 @@ Optional arguments:
 ```bash
 UnknownField-cli.exe test.cpp
 UnknownField-cli.exe test.cpp -g
+UnknownField-cli.exe test.cpp -- -IE:\External\Directory
 ```
 
 ## Example SDK:
