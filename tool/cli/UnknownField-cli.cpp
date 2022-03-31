@@ -1,9 +1,6 @@
 
 #include "ObfuscateField.h"
 
-static llvm::cl::OptionCategory
-    UnknownFieldOptionCategory("UnknownField OptionCategory");
-
 int main(int argc, const char **argv) {
   Expected<tooling::CommonOptionsParser> eOptParser =
       clang::tooling::CommonOptionsParser::create(

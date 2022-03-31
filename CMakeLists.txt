@@ -19,6 +19,8 @@ if(DEBUG_MODE)
 add_definitions(-DDEBUG_MODE)
 endif()
 
+set(CMAKE_CXX_FLAGS_RELEASE "/MT")
+
 add_library(UnknownField-lib STATIC 
 sdk/UnknownFieldSDK.h
 ObfuscateField.h

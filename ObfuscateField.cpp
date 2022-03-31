@@ -6,5 +6,8 @@ std::map<std::string, std::vector<std::string>>
     GlobalClassFieldDeclStringVectorMap;
 std::map<std::string, bool> GlobalSDKUnknownFieldProtectionEnabledMap;
 
-cl::opt<bool> GlobalObfucated{"g", cl::desc("GlobalObfucated"),
-                              cl::init(false)};
+llvm::cl::OptionCategory
+    UnknownFieldOptionCategory("UnknownField OptionCategory");
+
+cl::opt<bool> GlobalObfucated{"g", cl::desc("Enable global obfucation"), cl::init(false),
+                              cl::cat(UnknownFieldOptionCategory)};

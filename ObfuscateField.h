@@ -35,6 +35,7 @@ extern std::map<std::string, std::vector<std::string>>
     GlobalClassFieldDeclStringVectorMap;
 extern std::map<std::string, bool> GlobalSDKUnknownFieldProtectionEnabledMap;
 
+extern llvm::cl::OptionCategory UnknownFieldOptionCategory;
 extern cl::opt<bool> GlobalObfucated;
 
 class ObfuscateFieldDeclHandler : public MatchFinder::MatchCallback {
