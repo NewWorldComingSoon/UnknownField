@@ -145,7 +145,7 @@ private:
     return G;
   }
 
-  bool EnableObfuscateed(std::string ClassName) {
+  bool EnableObfuscated(std::string ClassName) {
     if (GlobalObfucated) {
       // This is a global tag
       return true;
@@ -170,7 +170,7 @@ public:
     {
       // Traverse map
       for (auto &Map : GlobalClassFieldDeclStringVectorMap) {
-        if (!EnableObfuscateed(Map.first)) {
+        if (!EnableObfuscated(Map.first)) {
           continue;
         }
 
