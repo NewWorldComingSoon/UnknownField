@@ -41,6 +41,7 @@ private:
 ```
 
 ## Dependency
+- Visual Studio with SDK10
 - [llvm-msvc](https://github.com/NewWorldComingSoon/llvm-msvc-build/releases)
 
 ## Build
