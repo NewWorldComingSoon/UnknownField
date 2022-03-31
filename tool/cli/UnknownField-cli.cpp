@@ -1,5 +1,5 @@
 
-#include "obfuscate_field.h"
+#include "ObfuscateField.h"
 
 static llvm::cl::OptionCategory
     UnknownFieldOptionCategory("UnknownField OptionCategory");

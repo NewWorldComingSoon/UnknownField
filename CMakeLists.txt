@@ -21,8 +21,8 @@ endif()
 
 add_library(UnknownField-lib STATIC 
 sdk/UnknownFieldSDK.h
-obfuscate_field.h
-obfuscate_field.cpp
+ObfuscateField.h
+ObfuscateField.cpp
 )
 
 target_link_libraries(UnknownField-lib
