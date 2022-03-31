@@ -121,7 +121,12 @@ public:
       return;
     }
 
-    auto Arg0IdentifierInfo = Args->getUnexpArgument(0)->getIdentifierInfo();
+    auto UnexpArgument0 = Args->getUnexpArgument(0);
+    if (!UnexpArgument0) {
+      return;
+    }
+
+    auto Arg0IdentifierInfo = UnexpArgument0->getIdentifierInfo();
     if (!Arg0IdentifierInfo) {
       return;
     }
