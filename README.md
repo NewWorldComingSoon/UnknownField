@@ -40,6 +40,9 @@ private:
 };
 ```
 
+## Dependency
+- [llvm-msvc](https://github.com/NewWorldComingSoon/llvm-msvc-build/releases)
+
 ## Build
 ```
 git clone --recurse-submodules https://github.com/NewWorldComingSoon/UnknownField.git
