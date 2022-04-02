@@ -59,9 +59,10 @@ public:
       if (FDNode->hasInClassInitializer()) {
         // Filter field that in class initializer
         GlobalSDKUnknownFieldProtectionEnabledMap[ClassNameStr] = false;
-        errs() << "Error: Found field(" << FieldStr << ")"
+        outs() << "Error: Found field(" << FieldStr << ")"
                << " that in class(" << ClassNameStr << ")"
                << " initializer we don't support!\n ";
+        exit(-1);
         return;
       }
 
@@ -133,6 +134,8 @@ public:
 
     StringRef ClassName = Arg0IdentifierInfo->getName();
     GlobalSDKUnknownFieldProtectionEnabledMap[ClassName.str()] = true;
+    outs() << "Scanning " << UnknownFieldProtectionTagName << " in class("
+           << ClassName << ").\n";
   }
 };
 
