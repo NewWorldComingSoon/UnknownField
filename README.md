@@ -59,7 +59,6 @@ cmake --build . --config Release -- -m
 
 ## TODO
 - Obfuscating the order of virtual functions.
-- GUI Tool.
 
 ## Note
 This project is currently still a demo.
