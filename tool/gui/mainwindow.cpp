@@ -101,8 +101,8 @@ void MainWindow::qPushButtonRunSlot() {
   }
   qProcess.start(qsCmd);
   qProcess.waitForFinished();
-  mQTextEditLog->append(qProcess.readAll());
-
+  mQTextEditLog->append(qProcess.readAllStandardError());
+  mQTextEditLog->append(qProcess.readAllStandardOutput());
   readSourceFileIntoTextEdit(mQStringFilename);
 }
 
