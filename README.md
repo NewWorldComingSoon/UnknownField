@@ -1,6 +1,8 @@
 # UnknownField
 UnknownField is a tool based clang that obfuscating the order of fields to protect your C/C++ game or code.
 
+![image](images/UnknownField-gui.png)
+
 ## Before
 ![image](images/UnknownField_before.png)
 
@@ -59,7 +61,6 @@ cmake --build . --config Release -- -m
 
 ## TODO
 - Obfuscating the order of virtual functions.
-- GUI Tool.
 
 ## Note
 This project is currently still a demo.
