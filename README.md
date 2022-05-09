@@ -24,6 +24,7 @@ Optional arguments:
 UnknownField-cli.exe test.cpp
 UnknownField-cli.exe test.cpp -g
 UnknownField-cli.exe test.cpp -- -IE:\External\Directory
+UnknownField-cli.exe test.cpp -- -IE:\External\Directory1 -IE:\External\Directory2
 ```
 
 ## Example SDK:
