@@ -93,13 +93,16 @@ void MainWindow::qPushButtonRunSlot() {
   QString qsExternalInclude = mQTextEditExternalInclude->toPlainText();
   if (qsExternalInclude.length() != 0) {
     QStringList qsList =
-        qsExternalInclude.split(QRegExp("[\n]"), QString::SkipEmptyParts);
+        qsExternalInclude.split(QRegExp("[\n|;]"), QString::SkipEmptyParts);
     qsCmd += " --";
     for (int i = 0; i < qsList.size(); ++i) {
-      qsCmd += " -I";
-      qsCmd += "\"";
-      qsCmd += qsList[i];
-      qsCmd += "\"";
+      QString qsInc = qsList[i].trimmed();
+      if (qsInc.length() > 0) {
+        qsCmd += " -I";
+        qsCmd += "\"";
+        qsCmd += qsInc;
+        qsCmd += "\"";
+      }
     }
   }
   qProcess.start(qsCmd);
