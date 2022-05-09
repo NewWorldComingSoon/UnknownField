@@ -94,9 +94,12 @@ void MainWindow::qPushButtonRunSlot() {
   if (qsExternalInclude.length() != 0) {
     QStringList qsList =
         qsExternalInclude.split(QRegExp("[\n]"), QString::SkipEmptyParts);
+    qsCmd += " --";
     for (int i = 0; i < qsList.size(); ++i) {
-      qsCmd += " -- -I";
+      qsCmd += " -I";
+      qsCmd += "\"";
       qsCmd += qsList[i];
+      qsCmd += "\"";
     }
   }
   qProcess.start(qsCmd);
