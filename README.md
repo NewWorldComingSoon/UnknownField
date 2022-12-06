@@ -49,17 +49,15 @@ private:
 - Visual Studio with SDK10 (without this you could not include windows.h in your file)
 
 ## Build Dependency
-- [llvm-msvc](https://github.com/NewWorldComingSoon/llvm-msvc-build/releases)
+- [llvm-msvc](https://github.com/NewWorldComingSoon/llvm-msvc/releases)
 
 ## Build
 ```
 git clone --recurse-submodules https://github.com/NewWorldComingSoon/UnknownField.git
 cd UnknownField
-mkdir build
-cd build
 set LLVM-MSVC-BIN=E:\llvm\llvm-msvc-bin  -> You need to replace your path.
-cmake ../ -DLLVM_DIR=%LLVM-MSVC-BIN%\lib\cmake\llvm -DClang_DIR=%LLVM-MSVC-BIN%\lib\cmake\clang
-cmake --build . --config Release -- -m
+cmake -Bbuild -DLLVM_DIR=%LLVM-MSVC-BIN%\lib\cmake\llvm -DClang_DIR=%LLVM-MSVC-BIN%\lib\cmake\clang
+cmake --build build --config Release -- -m
 ```
 
 ## TODO
